@@ -1,0 +1,10 @@
+{
+  "name": "weezevent-slack-notifier",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "restify": "4.1.1"
+  }
+}
