@@ -2,9 +2,10 @@ var restify = require('restify');
 var Promise = require('bluebird');
 var _ = require('lodash');
 var WeezEvent = require('./wz');
+var Slack = require('./slk');
 
 var requiredEnvKeysFilled = true;
-_.each(['WZ_USER', 'WZ_PWD', 'WZ_API', 'WZ_EVT_ID'], function(requiredEnvKey){
+_.each(['WZ_USER', 'WZ_PWD', 'WZ_API', 'WZ_EVT_ID', 'SLK_HOOK_URL', 'SLK_USERNAME', 'SLK_ICON'], function(requiredEnvKey){
   if(!process.env[requiredEnvKey]) {
     console.error("Missing mandatory environment key : %s", requiredEnvKey);
     requiredEnvKeysFilled = false;
@@ -20,6 +21,13 @@ var we = new WeezEvent({
   wzApi: process.env.WZ_API,
   wzEventId: process.env.WZ_EVT_ID
 });
+var slk = new Slack({
+  slkHookUrl: process.env.SLK_HOOK_URL,
+  slkChannel: process.env.SLK_CHANNEL,
+  slkUserName: process.env.SLK_USERNAME,
+  slkIcon: process.env.SLK_ICON
+});
+
 
 var server = restify.createServer({
   name: 'weezevent-slack-notifier',
@@ -31,6 +39,7 @@ server.get('/checkTickets', function (req, res, next) {
   ]).then(function(wzTickets){
     console.log("WZTickets : %s", JSON.stringify(wzTickets));
 
+    slk.sendMessage("Hello world !");
   });
   return next();
 });
