@@ -4,6 +4,7 @@ var _ = require('lodash');
 var WeezEvent = require('./wz');
 var Slack = require('./slk');
 var Store = require('./store');
+var SlackMessageProducer = require('./msgProducer');
 
 var requiredEnvKeysFilled = true;
 _.each(['WZ_USER', 'WZ_PWD', 'WZ_API', 'WZ_EVT_ID', 'SLK_HOOK_URL', 'SLK_USERNAME', 'SLK_ICON', 'MNG_URL'], function(requiredEnvKey){
@@ -31,7 +32,7 @@ var slk = new Slack({
 var store = new Store({
   mongo_url: process.env.MNG_URL
 });
-
+var msgProducer = new SlackMessageProducer();
 
 var server = restify.createServer({
   name: 'weezevent-slack-notifier',
@@ -45,14 +46,17 @@ server.get('/checkTickets', function (req, res, next) {
   ]).then(function(promResults) {
     var wzParticipants = promResults[0];
     var wzTickets = promResults[1];
+    var bdxioParticipants = msgProducer.convertWZParticipantsToBDXIOParticipants(wzParticipants, wzTickets);
     var persistedParticipants = promResults[2] || [];
       
-    console.log("wzParticipants: %s", JSON.stringify(wzParticipants));
+    console.log("wzParticipants: %s", JSON.stringify(bdxioParticipants));
     console.log("persistedParticipants : %s", JSON.stringify(persistedParticipants));
 
-    slk.sendMessage("Hello world !");
-      
-    store.persistTicketsIn("bdxio", wzParticipants);
+    var slackMsg = msgProducer.produceMessageFrom(persistedParticipants, bdxioParticipants);
+    if(slackMsg){
+        slk.sendMessage(slackMsg);
+        store.persistParticipantsIn("bdxio", bdxioParticipants);
+    }
   });
   return next();
 });
