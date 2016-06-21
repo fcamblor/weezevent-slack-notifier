@@ -14,7 +14,8 @@ SlackMessageProducer.prototype.produceMessageFrom = function(persistedParticipan
         // Grouping by ticket type
         }).groupBy('ticket')
         .reduce(function(result, value, key) {
-            result += "- "+value.length+" places "+key+" : "+(_.map(value, function(participant){
+            var plural = value.length>=2;
+            result += "- "+value.length+" place"+(plural?"s":"")+" "+key+" : "+(_.map(value, function(participant){
                 return participant.first_name+" "+participant.last_name+(participant.company?" ("+participant.company+")":"");
             }).join(", "))+"\n";
             newParticipantsCount += value.length;
