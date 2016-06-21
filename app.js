@@ -3,9 +3,10 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 var WeezEvent = require('./wz');
 var Slack = require('./slk');
+var Store = require('./store');
 
 var requiredEnvKeysFilled = true;
-_.each(['WZ_USER', 'WZ_PWD', 'WZ_API', 'WZ_EVT_ID', 'SLK_HOOK_URL', 'SLK_USERNAME', 'SLK_ICON'], function(requiredEnvKey){
+_.each(['WZ_USER', 'WZ_PWD', 'WZ_API', 'WZ_EVT_ID', 'SLK_HOOK_URL', 'SLK_USERNAME', 'SLK_ICON', 'MNG_URL'], function(requiredEnvKey){
   if(!process.env[requiredEnvKey]) {
     console.error("Missing mandatory environment key : %s", requiredEnvKey);
     requiredEnvKeysFilled = false;
@@ -27,6 +28,9 @@ var slk = new Slack({
   slk_user_name: process.env.SLK_USERNAME,
   slk_icon: process.env.SLK_ICON
 });
+var store = new Store({
+  mongo_url: process.env.MNG_URL
+});
 
 
 var server = restify.createServer({
@@ -35,11 +39,15 @@ var server = restify.createServer({
 });
 server.get('/checkTickets', function (req, res, next) {
   Promise.all([
-    we.fetchWZTickets()
-  ]).then(function(wzTickets){
+    we.fetchWZTickets(),
+    store.fetchPersistedTickets("bdxio")
+  ]).then(function(wzTickets, persistedTickets){
     console.log("WZTickets : %s", JSON.stringify(wzTickets));
+    console.log("persistedTickets : %s", JSON.stringify(persistedTickets));
 
     slk.sendMessage("Hello world !");
+      
+    store.persistTicketsIn("bdxio", wzTickets);
   });
   return next();
 });
