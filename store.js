@@ -1,6 +1,7 @@
 var Promise = require('bluebird');
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
+var _ = require('lodash');
 
 function Store(opts){
     var self = this;
@@ -41,7 +42,11 @@ Store.prototype.persistParticipantsIn = function(storeName, participants) {
                 return;
             }
 
-            db.collection('participants').updateOne({ name: storeName }, { $set: { name: storeName, participants: participants } }, function(err, r){
+            db.collection('participants').updateOne({ name: storeName }, { $set: {
+                name: storeName,
+                participants: participants,
+                latest_creation: _.max(_.map(participants, 'create_date'))
+            } }, function(err, r){
                 if(err) {
                     reject(err);
                     return;
