@@ -8,7 +8,7 @@ function Store(opts){
     self.mongo_url = opts.mongo_url;
 };
 
-Store.prototype.fetchPersistedTickets = function(storeName){
+Store.prototype.fetchPersistedParticipants = function(storeName){
     var self = this;
 
     return new Promise(function(resolve, reject) {
@@ -18,20 +18,20 @@ Store.prototype.fetchPersistedTickets = function(storeName){
                 return;
             }
 
-            db.collection('tickets').find({ name: storeName }).limit(1).next(function(err, storeTickets){
+            db.collection('participants').find({ name: storeName }).limit(1).next(function(err, storeParticipants){
                 if(err) {
                     reject(err);
                     return;
                 }
 
-                resolve(storeTickets.tickets);
+                resolve(storeParticipants.participants);
                 db.close();
             });
         });
     });
 };
 
-Store.prototype.persistTicketsIn = function(storeName, tickets) {
+Store.prototype.persistParticipantsIn = function(storeName, participants) {
     var self = this;
 
     return new Promise(function(resolve, reject) {
@@ -41,7 +41,7 @@ Store.prototype.persistTicketsIn = function(storeName, tickets) {
                 return;
             }
 
-            db.collection('tickets').updateOne({ name: storeName }, { $set: { name: storeName, tickets: tickets } }, function(err, r){
+            db.collection('participants').updateOne({ name: storeName }, { $set: { name: storeName, participants: participants } }, function(err, r){
                 if(err) {
                     reject(err);
                     return;

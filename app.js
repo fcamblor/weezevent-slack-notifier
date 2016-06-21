@@ -39,15 +39,15 @@ var server = restify.createServer({
 });
 server.get('/checkTickets', function (req, res, next) {
   Promise.all([
-    we.fetchWZTickets(),
-    store.fetchPersistedTickets("bdxio")
-  ]).then(function(wzTickets, persistedTickets){
-    console.log("WZTickets : %s", JSON.stringify(wzTickets));
-    console.log("persistedTickets : %s", JSON.stringify(persistedTickets));
+    we.fetchWZParticipants(),
+    store.fetchPersistedParticipants("bdxio")
+  ]).then(function(wzParticipants, persistedParticipants){
+    console.log("wzParticipants: %s", JSON.stringify(wzParticipants));
+    console.log("persistedParticipants : %s", JSON.stringify(persistedParticipants));
 
     slk.sendMessage("Hello world !");
       
-    store.persistTicketsIn("bdxio", wzTickets);
+    store.persistTicketsIn("bdxio", wzParticipants);
   });
   return next();
 });

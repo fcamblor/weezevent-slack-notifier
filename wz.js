@@ -36,20 +36,22 @@ WeezEvent.prototype.init = function(opts){
 };
 
 
-WeezEvent.prototype.fetchWZTickets = function() {
+WeezEvent.prototype.fetchWZParticipants = function() {
     var self = this;
     
     return rp({
-        uri: 'https://api.weezevent.com/tickets',
+        uri: 'https://api.weezevent.com/participants',
         qs: {
             access_token: self.wz_access_token,
             api_key: self.wz_api,
-            id_event: self.wz_evt_id
+            id_event: self.wz_evt_id,
+            full: 1,
+            max: 512
         },
         json: true
     }).then(function (results) {
         console.log(JSON.stringify(results));
-        return results;
+        return results.participants;
     });
 };
 
