@@ -1,6 +1,18 @@
 var restify = require('restify');
 var Promise = require('bluebird');
+var _ = require('lodash');
 var WeezEvent = require('./wz');
+
+var requiredEnvKeysFilled = true;
+_.each(['WZ_USER', 'WZ_PWD', 'WZ_API', 'WZ_EVT_ID'], function(requiredEnvKey){
+  if(!process.env[requiredEnvKey]) {
+    console.error("Missing mandatory environment key : %s", requiredEnvKey);
+    requiredEnvKeysFilled = false;
+  }
+});
+if(!requiredEnvKeysFilled) {
+  process.exit();
+}
 
 var we = new WeezEvent({
   wzUser: process.env.WZ_USER,
