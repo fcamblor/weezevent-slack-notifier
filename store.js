@@ -25,7 +25,7 @@ Store.prototype.fetchPersistedParticipants = function(storeName){
                     return;
                 }
 
-                resolve(storeParticipants.participants);
+                resolve(storeParticipants);
                 db.close();
             });
         });
