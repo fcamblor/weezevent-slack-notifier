@@ -57,5 +57,38 @@ WeezEvent.prototype.fetchWZParticipants = function() {
     });
 };
 
+function fillTicketsFromNode(tickets, categoryNode) {
+    tickets.push.apply(tickets, categoryNode.tickets || []);
+
+    if(categoryNode.categories) {
+        _.each(categoryNode.categories, function(categorySubNode) {
+            fillTicketsFromNode(tickets, categorySubNode);
+        });
+    }
+}
+
+WeezEvent.prototype.fetchWZEventTickets = function() {
+    var self = this;
+
+    return rp({
+        uri: 'https://api.weezevent.com/tickets',
+        qs: {
+            access_token: self.wz_access_token,
+            api_key: self.wz_api,
+            "id_event[]": self.wz_event_id
+        },
+        json: true
+    }).then(function (results) {
+        console.log(JSON.stringify(results));
+
+        var flattenedTickets = [];
+        _.each(results.events, function(event) {
+            fillTicketsFromNode(flattenedTickets, event);
+        });
+
+        return flattenedTickets;
+    });
+};
+
 
 module.exports = WeezEvent;

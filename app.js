@@ -40,8 +40,13 @@ var server = restify.createServer({
 server.get('/checkTickets', function (req, res, next) {
   Promise.all([
     we.fetchWZParticipants(),
+    we.fetchWZEventTickets(),
     store.fetchPersistedParticipants("bdxio")
-  ]).then(function(wzParticipants, persistedParticipants){
+  ]).then(function(promResults) {
+    var wzParticipants = promResults[0];
+    var wzTickets = promResults[1];
+    var persistedParticipants = promResults[2] || [];
+      
     console.log("wzParticipants: %s", JSON.stringify(wzParticipants));
     console.log("persistedParticipants : %s", JSON.stringify(persistedParticipants));
 
