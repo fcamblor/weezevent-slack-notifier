@@ -1,4 +1,5 @@
 var rp = require('request-promise');
+var _ = require('lodash');
 var Promise = require('bluebird');
 
 function WeezEvent(opts){
@@ -7,7 +8,7 @@ function WeezEvent(opts){
     self.wz_user = opts.wz_user;
     self.wz_pwd = opts.wz_pwd;
     self.wz_api = opts.wz_api;
-    self.wz_evt_id = opts.wz_event_id;
+    self.wz_event_id = opts.wz_event_id;
 
     self.wz_access_token = null;
 };
@@ -18,6 +19,7 @@ WeezEvent.prototype.init = function(opts){
     // Retrieving weezevent access token given user/password
     return rp({
         uri: 'https://api.weezevent.com/auth/access_token',
+        method: 'POST',
         qs: {
             username: self.wz_user,
             password: self.wz_pwd,
@@ -38,13 +40,13 @@ WeezEvent.prototype.init = function(opts){
 
 WeezEvent.prototype.fetchWZParticipants = function() {
     var self = this;
-    
+
     return rp({
         uri: 'https://api.weezevent.com/participants',
         qs: {
             access_token: self.wz_access_token,
             api_key: self.wz_api,
-            id_event: self.wz_evt_id,
+            "id_event[]": self.wz_event_id,
             full: 1,
             max: 512
         },
