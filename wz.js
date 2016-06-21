@@ -4,10 +4,10 @@ var Promise = require('bluebird');
 function WeezEvent(opts){
     var self = this;
 
-    self.wz_user = opts.wzUser;
-    self.wz_pwd = opts.wzPwd;
-    self.wz_api = opts.wzApi;
-    self.wz_evt_id = opts.wzEventId;
+    self.wz_user = opts.wz_user;
+    self.wz_pwd = opts.wz_pwd;
+    self.wz_api = opts.wz_api;
+    self.wz_evt_id = opts.wz_event_id;
 
     self.wz_access_token = null;
 };

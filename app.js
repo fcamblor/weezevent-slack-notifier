@@ -16,16 +16,16 @@ if(!requiredEnvKeysFilled) {
 }
 
 var we = new WeezEvent({
-  wzUser: process.env.WZ_USER,
-  wzPwd: process.env.WZ_PWD,
-  wzApi: process.env.WZ_API,
-  wzEventId: process.env.WZ_EVT_ID
+  wz_user: process.env.WZ_USER,
+  wz_pwd: process.env.WZ_PWD,
+  wz_api: process.env.WZ_API,
+  wz_event_id: process.env.WZ_EVT_ID
 });
 var slk = new Slack({
-  slkHookUrl: process.env.SLK_HOOK_URL,
-  slkChannel: process.env.SLK_CHANNEL,
-  slkUserName: process.env.SLK_USERNAME,
-  slkIcon: process.env.SLK_ICON
+  slk_hook_url: process.env.SLK_HOOK_URL,
+  slk_channel: process.env.SLK_CHANNEL,
+  slk_user_name: process.env.SLK_USERNAME,
+  slk_icon: process.env.SLK_ICON
 });
 
 
