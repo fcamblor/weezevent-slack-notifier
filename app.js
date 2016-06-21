@@ -38,7 +38,7 @@ var server = restify.createServer({
   name: 'weezevent-slack-notifier',
   version: '1.0.0'
 });
-server.get('/checkTickets', function (req, res, next) {
+server.get('/checkParticipants', function (req, res, next) {
   Promise.all([
     we.fetchWZParticipants(),
     we.fetchWZEventTickets(),
@@ -58,6 +58,7 @@ server.get('/checkTickets', function (req, res, next) {
         store.persistParticipantsIn("bdxio", bdxioParticipants);
     }
   });
+  res.send(200)
   return next();
 });
 
