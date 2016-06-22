@@ -9,10 +9,10 @@ function writeParticipants(participants) {
     }).join(", ");
 };
 
-SlackMessageProducer.prototype.produceMessageFrom = function(persistedParticipants, updatedBdxioParticipants){
+SlackMessageProducer.prototype.produceMessageFrom = function(persistedParticipants, upToDateFetchedParticipants){
     var thresholdDate = persistedParticipants.latest_creation?Date.parse(persistedParticipants.latest_creation):0;
 
-    var newParticipantsByTicket = _(updatedBdxioParticipants)
+    var newParticipantsByTicket = _(upToDateFetchedParticipants)
         // First, filtering every fetched participants already present in persisted participants
         .filter(function(bdxioParticipant){
             return Date.parse(bdxioParticipant.create_date) > thresholdDate;
@@ -25,10 +25,13 @@ SlackMessageProducer.prototype.produceMessageFrom = function(persistedParticipan
         plural = newParticipantsCount>=2;
 
     if(ticketTypes.length === 0) {
+        // Returning null won't trigger slack bot
         return null;
     } else if(ticketTypes.length === 1) {
-        msg += newParticipantsCount+" place"+(plural?"s":"")+" de type "+ticketTypes[0]+" "+(plural?"viennent":"vient")+" d'être vendue"+(plural?"s":"")+" : "+writeParticipants(newParticipantsByTicket[ticketTypes[0]]);
+        // If we only have 1 type of ticket price concerned, using the one-line-formatted message
+        msg += newParticipantsCount+" place"+(plural?"s":"")+" de type "+ticketTypes[0]+" "+(plural?"viennent":"vient")+" d'être vendue"+(plural?"s":"")+" à : "+writeParticipants(newParticipantsByTicket[ticketTypes[0]]);
     } else {
+        // If we have more than 1 type of tickets, using the multi-line big message
         msg += newParticipantsCount+" place"+(plural?"s viennent":" vient")+" d'être vendue"+(plural?"s":"")+" répartie"+(plural?"s":"")+" comme suit :\n";
         msg += _.reduce(newParticipantsByTicket, function(result, value, key) {
             var plural = value.length>=2;
@@ -38,10 +41,7 @@ SlackMessageProducer.prototype.produceMessageFrom = function(persistedParticipan
         }, "");
     }
 
-    if(newParticipantsCount === 0) {
-        return null;
-    }
-
+    // Because emojis are important on slack ! \o/
     return msg+"\n:tada::tada::tada:";
 };
 
