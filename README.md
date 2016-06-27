@@ -30,15 +30,24 @@ You will have to define following environment variables :
 
 When starting the app, a weezevent handshake will be made to retrieve an API access token which will be used in subsequent calls.
 
-Everytime a `GET /checkParticipants` request will be made, following steps will be made :
+Everytime a `GET /checkParticipants` request will be made, following steps will be executed :
 
   - Previously persisted participants will be retrieved from MongoDB storage
   - Current participants list will be retrieved from Weezevent
   - New participants appeared will be identified by diff-ing the 2 lists
-  - As long as at least 1 new participant will be detected, a message will be sent to Slack bot in order to list new participants
+  - As long as at least 1 new participant is detected, a message will be sent to Slack bot in order to list new participants
     (obviously, if no new participant is detected, slack bot won't say anything)
 
 
 Note that no CRON is made : the check is made only on every request.
 
-You can use Cron as a Service providers such as https://crondash.com (free) to trigger the checks at different period of time, with maybe different frequencies depending on the current day hour.
+You can use `Cron as a Service` providers such as https://crondash.com (free) to trigger the checks at different period of time, with maybe different frequencies depending on the current day hour.
+
+
+# Known limitations
+
+Currently, cancelled & refunded tickets are not handled (not that it would be very difficult to handle, but this case has never happened for BDX I/O, so I didn't considered it as worth to implement, but PR are welcome :-))
+
+We have some things which may be interesting to have more configurable in order to encourage configuration rather than forking the project to change some area of the code, particularly :
+- [The message displayed by the bot](https://github.com/fcamblor/weezevent-slack-notifier/blob/master/msgProducer.js#L22)
+- Weezevent attendee's company which is retrieved, currently, through a ["dynamic answer" named "Societe"](https://github.com/fcamblor/weezevent-slack-notifier/blob/master/msgProducer.js#L62)
