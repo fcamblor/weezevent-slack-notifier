@@ -49,5 +49,5 @@ You can use `Cron as a Service` providers such as https://crondash.com (free) to
 Currently, cancelled & refunded tickets are not handled (not that it would be very difficult to handle, but this case has never happened for BDX I/O, so I didn't considered it as worth to implement, but PR are welcome :-))
 
 We have some things which may be interesting to have more configurable in order to encourage configuration rather than forking the project to change some area of the code, particularly :
-- [The message displayed by the bot](https://github.com/fcamblor/weezevent-slack-notifier/blob/master/msgProducer.js#L22)
+- [The message displayed by the bot](https://github.com/fcamblor/weezevent-slack-notifier/blob/master/msgProducer.js#L22) (message is hardcoded in french right now ... you need to fork the repo if you want to update it :()
 - Weezevent attendee's company which is retrieved, currently, through a ["dynamic answer" named "Societe"](https://github.com/fcamblor/weezevent-slack-notifier/blob/master/msgProducer.js#L62)
