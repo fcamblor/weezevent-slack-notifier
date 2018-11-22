@@ -57,7 +57,7 @@ server.get('/checkParticipants', function (req, res, next) {
         slk.sendMessage(slackMsg);
         store.persistParticipantsIn("bdxio", bdxioParticipants);
     }
-  });
+  }, (error) => console.error(error));
   res.send(200)
   return next();
 });
