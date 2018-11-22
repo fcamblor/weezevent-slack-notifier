@@ -50,18 +50,32 @@ SlackMessageProducer.prototype.convertWZParticipantsToBDXIOParticipants = functi
 
     return _(wzParticipants)
         .map(function(wzParticipant) {
-            return {
-                id: wzParticipant.id_participant,
-                ticket: ticketsById[wzParticipant.id_ticket].name,
-                deleted: wzParticipant.deleted,
-                refund: wzParticipant.refund,
-                create_date: wzParticipant.create_date,
-                paid: wzParticipant.paid,
-                first_name: wzParticipant.owner.first_name,
-                last_name: wzParticipant.owner.last_name,
-                company: _.map(_.filter(wzParticipant.answers, function(answ){ return answ.label === 'Societe'; }), "value").join("")
-            };
-        }).sortBy('create_date').value();
+            if(!ticketsById[wzParticipant.id_ticket]) {
+                return {
+                    id: wzParticipant.buyer.id_acheteur,
+                    ticket: "__unknown__",
+                    deleted: false,
+                    refund: false,
+                    create_date: null,
+                    paid: true,
+                    first_name: wzParticipant.buyer.acheteur_first_name,
+                    last_name: wzParticipant.buyer.acheteur_last_name,
+                    company: _.map(_.filter(wzParticipant.answers, function(answ){ return answ.label === 'Societe'; }), "value").join("")
+                };
+            } else {
+                return {
+                    id: wzParticipant.id_participant,
+                    ticket: ticketsById[wzParticipant.id_ticket].name,
+                    deleted: wzParticipant.deleted,
+                    refund: wzParticipant.refund,
+                    create_date: wzParticipant.create_date,
+                    paid: wzParticipant.paid,
+                    first_name: wzParticipant.owner.first_name,
+                    last_name: wzParticipant.owner.last_name,
+                    company: _.map(_.filter(wzParticipant.answers, function(answ){ return answ.label === 'Societe'; }), "value").join("")
+                };
+            }
+        }).filter(participant => !!participant).sortBy('create_date').value();
 };
 
 module.exports = SlackMessageProducer;
